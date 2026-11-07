@@ -1,0 +1,68 @@
+<h2>Debolezze dei tipi</h2>
+<p class="intro">Ogni tipo è debole contro certi attacchi: sotto ogni debolezza c'è una spiegazione "logica" per ricordarla.
+  <b>×2</b> = danno doppio. <b>Immune</b> = danno zero.</p>
+
+<section class="quiz">
+  <h3>Ripasso rapido</h3>
+  @if (!quiz()) {
+    <button (click)="nextQuiz()">Inizia il quiz</button>
+  } @else {
+    <p>Contro cosa è debole il tipo <span class="badge t-{{ quiz()!.type }}">{{ label(quiz()!.type) }}</span>?</p>
+    @if (revealed()) {
+      <div class="chips">
+        @for (w of quiz()!.weakTo; track w.type) { <span class="badge t-{{ w.type }}">{{ label(w.type) }}</span> }
+      </div>
+    }
+    <div class="row">
+      @if (!revealed()) { <button (click)="revealed.set(true)">Mostra risposta</button> }
+      <button class="alt" (click)="nextQuiz()">Prossimo tipo</button>
+    </div>
+  }
+</section>
+
+<nav class="jump" aria-label="Vai al tipo">
+  @for (c of chart(); track c.type) {
+    <button class="badge t-{{ c.type }}" (click)="jump(c.type)">{{ label(c.type) }}</button>
+  }
+</nav>
+
+@if (error()) { <p class="err">{{ error() }}</p> }
+
+<div class="grid">
+  @for (c of chart(); track c.type) {
+    <article class="card" [id]="'type-' + c.type">
+      <header>
+        <span class="badge big t-{{ c.type }}">{{ label(c.type) }}</span>
+        <em>{{ c.tagline }}</em>
+      </header>
+
+      <h4>Debole contro</h4>
+      <ul class="why">
+        @for (w of c.weakTo; track w.type) {
+          <li><span class="badge t-{{ w.type }}">{{ label(w.type) }} <b>×{{ w.multiplier }}</b></span>
+            <span class="txt">{{ w.why }}</span></li>
+        } @empty { <li class="none">Nessuna debolezza.</li> }
+      </ul>
+
+      @if (c.immuneTo.length) {
+        <h4>Immune a</h4>
+        <ul class="why">
+          @for (w of c.immuneTo; track w.type) {
+            <li><span class="badge t-{{ w.type }}">{{ label(w.type) }} <b>×0</b></span>
+              <span class="txt">{{ w.why }}</span></li>
+          }
+        </ul>
+      }
+
+      <h4>Resiste a</h4>
+      <div class="chips">
+        @for (t of c.resists; track t) { <span class="badge sm t-{{ t }}">{{ label(t) }}</span> } @empty { <span class="none">—</span> }
+      </div>
+
+      <h4>Colpisce forte</h4>
+      <div class="chips">
+        @for (t of c.strongAgainst; track t) { <span class="badge sm t-{{ t }}">{{ label(t) }}</span> } @empty { <span class="none">—</span> }
+      </div>
+    </article>
+  }
+</div>

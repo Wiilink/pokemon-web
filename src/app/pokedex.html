@@ -1,0 +1,62 @@
+<div class="bar">
+  <div class="ac">
+    <input type="search" placeholder="Cerca per nome…" autocomplete="off" role="combobox"
+      [attr.aria-expanded]="open()" aria-autocomplete="list" [value]="query()"
+      (input)="onInput($any($event.target).value)" (keydown)="onKey($event)"
+      (focus)="open.set(suggestions().length > 0)" (blur)="open.set(false)" />
+    @if (open()) {
+      <ul role="listbox">
+        @for (s of suggestions(); track s.id; let i = $index) {
+          <li role="option" [class.on]="i === active()" (mousedown)="pick(s); $event.preventDefault()">
+            <img [src]="s.image" alt="" width="36" height="36" /><span>{{ s.name }}</span><small>{{ num(s.id) }}</small>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+  <select (change)="onType($any($event.target).value)">
+    <option value="">Tutti i tipi</option>
+    @for (t of types(); track t) { <option [value]="t">{{ label(t) }}</option> }
+  </select>
+  <span class="count">{{ total() }} Pokémon</span>
+</div>
+
+@if (error()) { <p class="err">{{ error() }}</p> }
+
+@if (loading()) { <p class="loading">Caricamento…</p> }
+<div class="grid">
+  @for (p of items(); track p.id) {
+    <article class="card">
+      <div class="head"><span class="id">{{ num(p.id) }}</span><h3>{{ p.name }}</h3></div>
+      <img [src]="p.image" [alt]="p.name" width="475" height="475" />
+      <div class="types">
+        @for (t of p.types; track t) { <span class="badge t-{{ t }}">{{ label(t) }}</span> }
+      </div>
+
+      <h4>Statistiche <small>(tot. {{ sum(p) }})</small></h4>
+      <div class="stats">
+        @for (s of p.stats; track s.name) {
+          <div class="stat"><span>{{ s.name }}</span><b>{{ s.value }}</b>
+            <i><u [style.width.%]="pct(s.value)"></u></i></div>
+        }
+      </div>
+
+      <h4>Debole contro</h4>
+      <div class="weak">
+        @for (w of p.weaknesses; track w.type) {
+          <span class="badge t-{{ w.type }}">{{ label(w.type) }} <em>×{{ w.multiplier }}</em></span>
+        } @empty { <span class="none">Nessuna debolezza</span> }
+      </div>
+    </article>
+  }
+</div>
+
+<nav class="pager" aria-label="Pagine">
+  <button (click)="go(1)" [disabled]="page() === 1 || loading()">«</button>
+  <button (click)="go(page() - 1)" [disabled]="page() === 1 || loading()">‹ Prec.</button>
+  <span>Pagina {{ page() }} di {{ pages() }}</span>
+  <button (click)="go(page() + 1)" [disabled]="page() === pages() || loading()">Succ. ›</button>
+  <button (click)="go(pages())" [disabled]="page() === pages() || loading()">»</button>
+</nav>
+
+
