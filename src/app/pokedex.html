@@ -6,7 +6,7 @@
       (focus)="open.set(suggestions().length > 0)" (blur)="open.set(false)" />
     @if (open()) {
       <ul role="listbox">
-        @for (s of suggestions(); track s.id; let i = $index) {
+        @for (s of suggestions(); track s.key; let i = $index) {
           <li role="option" [class.on]="i === active()" (mousedown)="pick(s); $event.preventDefault()">
             <img [src]="s.image" alt="" width="36" height="36" /><span>{{ s.name }}</span><small>{{ num(s.id) }}</small>
           </li>
@@ -25,7 +25,7 @@
 
 @if (loading()) { <p class="loading">Caricamento…</p> }
 <div class="grid">
-  @for (p of items(); track p.id) {
+  @for (p of items(); track p.key) {
     <article class="card">
       <div class="head"><span class="id">{{ num(p.id) }}</span><h3>{{ p.name }}</h3></div>
       <img [src]="p.image" [alt]="p.name" width="475" height="475" />

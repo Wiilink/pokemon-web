@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 export interface Stat { name: string; value: number }
 export interface Weakness { type: string; multiplier: number }
-export interface Pokemon { id: number; name: string; image: string; types: string[]; stats: Stat[]; weaknesses: Weakness[] }
+export interface Pokemon { id: number; key: number; form: boolean; name: string; image: string; types: string[]; stats: Stat[]; weaknesses: Weakness[] }
 
 export interface Weak { type: string; multiplier: number; why: string }
 export interface Immune { type: string; why: string }
